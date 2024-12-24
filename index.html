@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Znapp</title>
+    <link rel="manifest" href="./manifest.json">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Znapp">
+    <meta name="application-name" content="Znapp">
+    <meta name="description" content="A customizable app launcher that shows apps based on time and days">
+    
+    <!-- iOS icons -->
+    <link rel="icon" type="image/svg+xml" href="./icon.svg">
+    <link rel="apple-touch-icon" href="./icon.svg">
+    <link rel="mask-icon" href="./icon.svg" color="#000000">
+    
+    <!-- iOS splash screens -->
+    <link rel="apple-touch-startup-image" href="./splash.png">
+    <link rel="stylesheet" href="./styles.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <div class="install-prompt" id="installPrompt">
+            <div class="install-prompt-content">
+                <h2>Install Znapp</h2>
+                <p>Add this app to your home screen for the best experience!</p>
+                <button class="install-button" id="installButton">Install Now</button>
+            </div>
+        </div>
+        <header>
+            <div class="header-icons">
+                <div style="margin-left: 0; margin-right: auto">
+                    <a class="material-icons" style="text-decoration: none" target="_blank" href="https://discord.com/channels/1320700666292863018/1320700666292863021">discord</a>
+                    <span class="material-icons" id="infoToggle">info</span>
+                    <a class="material-icons" style="text-decoration: none" target="_blank" href="https://www.paypal.com/donate/?hosted_button_id=SYL79B2QV7CD8" title="Support Znapp">volunteer_activism</a>
+                </div>
+                <div style="margin-left: auto; margin-right: 0">
+                    <span class="material-icons" id="themeToggle">light_mode</span>
+                    <span class="material-icons" id="settingsToggle">settings</span>
+                </div>
+            </div>
+        </header>
+        <div id="infoPanel" class="info-panel hidden">
+            <div class="info-content">
+                <h2>Welcome to Znapp!</h2>
+                <p>Znapp is a customizable app launcher that shows different apps based on your schedule. Here's how it works:</p>
+                <ul>
+                    <li>Add apps by clicking the "+" button</li>
+                    <li>Set when each app should appear by selecting days and times</li>
+                    <li>Apps will automatically show/hide based on your schedule</li>
+                    <li>Customize the interface with light/dark mode</li>
+                </ul>
+                <p>Get started by adding your first app!</p>
+            </div>
+        </div>
+        <main>
+            <div class="app-grid">
+                <div class="app-row">
+                    <div class="app-icon add-app">
+                        <span class="material-icons">add</span>
+                        <span class="app-label">Add App</span>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <div class="modal" id="addAppModal">
+            <div class="modal-content">
+                <form id="addAppForm">
+                    <div class="form-group">
+                        <label>Icon</label>
+                        <div class="icon-tabs">
+                            <button type="button" class="tab-btn active" data-tab="material">Material</button>
+                            <button type="button" class="tab-btn" data-tab="brands">Brands</button>
+                            <input type="text" id="iconSearch" placeholder="Search icons...">
+                        </div>
+                        <div class="section">
+                            <div class="icon-grid" id="materialIcons">
+                                <!-- Material icons will be loaded dynamically -->
+                            </div>
+                        </div>
+                        <div class="section">
+                            <div class="icon-grid hidden" id="brandIcons">
+                                <!-- Brand icons will be loaded dynamically -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="appName">Name</label>
+                        <input type="text" id="appName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="appUrl">URL</label>
+                        <input type="url" id="appUrl" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Time Slots</label>
+                        <div class="time-slots-container">
+                            <div class="time-slot">
+                                <input type="time" class="time-from" required>
+                                <input type="time" class="time-to" required>
+                                <div class="days-container"></div>
+                            </div>
+                        </div>
+                        <button type="button" id="addTimeSlot">Add Time Slot</button>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn-secondary cancel-btn">Cancel</button>
+                        <button type="submit" class="btn-primary">Save</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script src="app.js" type="module"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./service-worker.js')
+                .then(registration => {
+                    console.log('ServiceWorker registration successful');
+                })
+                .catch(err => {
+                    console.error('ServiceWorker registration failed:', err);
+                });
+        }
+    </script>
+</body>
+</html>
