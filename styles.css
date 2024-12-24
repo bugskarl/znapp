@@ -100,7 +100,8 @@ header {
 
 .app-grid {
     display: flex;
-    flex-direction: column;
+    flex-direction: row-reverse;
+    flex-wrap: wrap-reverse;
     gap: 1rem;
     padding: 1rem;
     padding-bottom: 0 !important;
@@ -110,16 +111,11 @@ header {
     background: var(--surface-color);
     border-radius: 16px;
     box-shadow: 0 4px 12px var(--shadow-color);
-    width: calc(100% - 32px);
-    direction: rtl;
+    width: calc(100% - 64px);
+    max-width: 1200px;
+    height: 200px;
+    align-content: flex-start;
     transition: background-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-.app-row {
-    display: flex;
-    gap: 1rem;
-    margin-bottom: 1rem;
-    justify-content: flex-start;
 }
 
 .app-icon {
@@ -130,8 +126,9 @@ header {
     padding: 12px;
     border-radius: 12px;
     transition: all 0.3s ease;
-    width: 100%;
-    max-width: 120px;
+    width: 100px;
+    min-width: 100px;
+    height: 84px;
     position: relative;
     cursor: pointer;
 }

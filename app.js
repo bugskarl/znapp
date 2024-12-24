@@ -695,12 +695,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const appGrid = document.querySelector('.app-grid');
         const addApp = document.querySelector('.add-app');
         
-        // Clear the grid and create first row
+        // Clear the grid
         appGrid.innerHTML = '';
-        const firstRow = document.createElement('div');
-        firstRow.className = 'app-row';
-        appGrid.appendChild(firstRow);
-        firstRow.appendChild(addApp);
+        
+        // Add the "Add App" button first
+        appGrid.appendChild(addApp);
 
         const isSettingsEnabled = settingsToggle.classList.contains('active');
         console.log('Settings enabled:', isSettingsEnabled);
@@ -709,52 +708,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const appsToShow = isSettingsEnabled ? apps : apps.filter(app => isAppInTime(app));
         console.log('Apps to show:', appsToShow.length);
 
-        // For 4 or more apps: first 4 go in second row, next 3 in first row
-        // For 3 or fewer apps: all go in first row
-        if (appsToShow.length > 3) {
-            // Create second row for first 4 apps
-            const secondRow = document.createElement('div');
-            secondRow.className = 'app-row';
-            appGrid.appendChild(secondRow);
-
-            // First 4 apps go in second row
-            const secondRowApps = appsToShow.slice(0, 4);
-            [...secondRowApps].reverse().forEach(app => {
-                console.log('Adding to second row:', app.name);
-                const appElement = createAppElement(
-                    app,
-                    apps.indexOf(app),
-                    isSettingsEnabled ? isAppInTime(app) : true
-                );
-                secondRow.appendChild(appElement);
-            });
-
-            // Next 3 apps go in first row
-            const firstRowApps = appsToShow.slice(4, 7);
-            [...firstRowApps].reverse().forEach(app => {
-                console.log('Adding to first row:', app.name);
-                const appElement = createAppElement(
-                    app,
-                    apps.indexOf(app),
-                    isSettingsEnabled ? isAppInTime(app) : true
-                );
-                firstRow.insertBefore(appElement, addApp);
-            });
-        } else {
-            // 3 or fewer apps all go in first row
-            [...appsToShow].reverse().forEach(app => {
-                console.log('Adding to first row:', app.name);
-                const appElement = createAppElement(
-                    app,
-                    apps.indexOf(app),
-                    isSettingsEnabled ? isAppInTime(app) : true
-                );
-                firstRow.insertBefore(appElement, addApp);
-            });
-        }
-
-        // Update first row visibility
-        updateFirstRowVisibility();
+        // Add all apps to the grid in reverse order
+        [...appsToShow].reverse().forEach(app => {
+            console.log('Adding app:', app.name);
+            const appElement = createAppElement(
+                app,
+                apps.indexOf(app),
+                isSettingsEnabled ? isAppInTime(app) : true
+            );
+            appGrid.insertBefore(appElement, addApp);
+        });
     }
 
     function isAppInTime(app) {
@@ -787,21 +750,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         return true;
-    }
-
-    function updateFirstRowVisibility() {
-        const firstRow = document.querySelector('.app-grid .app-row:first-child');
-        if (!firstRow) return;
-        
-        // Count non-add-app elements in first row
-        const nonAddAppCount = firstRow.querySelectorAll('.app-icon:not(.add-app)').length;
-        
-        // Show row if settings are active or if there are other apps besides add-app
-        if (settingsToggle.classList.contains('active') || nonAddAppCount > 0) {
-            firstRow.style.display = 'flex';
-        } else {
-            firstRow.style.display = 'none';
-        }
     }
 
     // Form submission handler
