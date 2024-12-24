@@ -643,42 +643,60 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         draggedApp = e.target.closest('.app-icon');
+        if (!draggedApp || draggedApp.classList.contains('add-app')) {
+            e.preventDefault();
+            return;
+        }
         draggedApp.classList.add('dragging');
+        e.dataTransfer.setData('text/plain', draggedApp.getAttribute('data-index'));
+        e.dataTransfer.effectAllowed = 'move';
     }
 
     function handleDragEnd(e) {
         if (draggedApp) {
             draggedApp.classList.remove('dragging');
+            document.querySelectorAll('.app-icon').forEach(app => {
+                app.classList.remove('drag-over');
+            });
             draggedApp = null;
         }
     }
 
     function handleDragOver(e) {
-        const isSettingsEnabled = settingsToggle.classList.contains('active');
-        if (!isSettingsEnabled || !draggedApp) {
+        if (!settingsToggle.classList.contains('active')) return;
+        
+        const target = e.target.closest('.app-icon');
+        if (!target || target === draggedApp || target.classList.contains('add-app')) {
             return;
         }
+        
         e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        
+        // Add drag-over class to target
+        document.querySelectorAll('.app-icon').forEach(app => {
+            app.classList.remove('drag-over');
+        });
+        target.classList.add('drag-over');
     }
 
     function handleDrop(e) {
-        const isSettingsEnabled = settingsToggle.classList.contains('active');
-        if (!isSettingsEnabled || !draggedApp) {
-            return;
-        }
+        if (!settingsToggle.classList.contains('active')) return;
         e.preventDefault();
         
         const dropTarget = e.target.closest('.app-icon');
-        if (!dropTarget || dropTarget === draggedApp) return;
+        if (!dropTarget || dropTarget === draggedApp || dropTarget.classList.contains('add-app')) {
+            return;
+        }
 
-        // Get the current apps
-        const apps = JSON.parse(localStorage.getItem('apps') || '[]');
-        
         // Get indices
-        const fromIndex = parseInt(draggedApp.getAttribute('data-index'));
+        const fromIndex = parseInt(e.dataTransfer.getData('text/plain'));
         const toIndex = parseInt(dropTarget.getAttribute('data-index'));
         
-        // Reorder the array
+        if (fromIndex === toIndex) return;
+
+        // Get the current apps and reorder
+        const apps = JSON.parse(localStorage.getItem('apps') || '[]');
         const [movedApp] = apps.splice(fromIndex, 1);
         apps.splice(toIndex, 0, movedApp);
         

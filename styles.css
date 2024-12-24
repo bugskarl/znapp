@@ -129,6 +129,7 @@ header {
     height: 84px;
     position: relative;
     cursor: pointer;
+    user-select: none;
 }
 
 .app-icon.draggable {
@@ -138,10 +139,21 @@ header {
 .app-icon.dragging {
     opacity: 0.5;
     background: var(--hover-color);
+    z-index: 1000;
 }
 
 .app-icon.drag-over {
     transform: translateX(10px);
+    border: 2px dashed var(--text-color);
+}
+
+.app-icon:hover {
+    background: var(--hover-color);
+}
+
+.app-icon .control-icon {
+    pointer-events: auto;
+    z-index: 1;
 }
 
 .app-icon.out-of-time {
@@ -219,11 +231,6 @@ header {
 
 #settingsToggle.active {
     color: var(--primary-color);
-}
-
-.app-icon:hover {
-    background: var(--hover-color);
-    transform: translateY(-4px);
 }
 
 .app-label {
