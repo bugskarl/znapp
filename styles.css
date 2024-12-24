@@ -111,9 +111,7 @@ header {
     background: var(--surface-color);
     border-radius: 16px;
     box-shadow: 0 4px 12px var(--shadow-color);
-    width: calc(100% - 64px);
-    max-width: 1200px;
-    height: 200px;
+    width: calc(100% - 32px);
     align-content: flex-start;
     transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
@@ -126,8 +124,7 @@ header {
     padding: 12px;
     border-radius: 12px;
     transition: all 0.3s ease;
-    width: 100px;
-    min-width: 100px;
+    width: 79px;
     height: 84px;
     position: relative;
     cursor: pointer;
