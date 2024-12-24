@@ -70,6 +70,14 @@
             <div class="modal-content">
                 <form id="addAppForm">
                     <div class="form-group">
+                        <label for="appName">Name</label>
+                        <input type="text" id="appName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="appUrl">URL</label>
+                        <input type="url" id="appUrl" required>
+                    </div>
+                    <div class="form-group">
                         <label>Icon</label>
                         <div class="icon-tabs">
                             <button type="button" class="tab-btn active" data-tab="material">Material</button>
@@ -86,14 +94,6 @@
                                 <!-- Brand icons will be loaded dynamically -->
                             </div>
                         </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="appName">Name</label>
-                        <input type="text" id="appName" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="appUrl">URL</label>
-                        <input type="url" id="appUrl" required>
                     </div>
                     <div class="form-group">
                         <label>Time Slots</label>
