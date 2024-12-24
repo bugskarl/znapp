@@ -124,7 +124,8 @@ header {
     padding: 12px;
     border-radius: 12px;
     transition: all 0.3s ease;
-    width: 79px;
+    max-width: 79px;
+    flex: auto;
     height: 84px;
     position: relative;
     cursor: pointer;
@@ -382,11 +383,6 @@ header {
     
     .app-row {
         gap: 16px;
-    }
-    
-    .app-icon {
-        padding: 8px;
-        max-width: 100px;
     }
     
     .app-label {
