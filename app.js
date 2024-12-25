@@ -915,31 +915,56 @@ document.addEventListener('DOMContentLoaded', () => {
     const installPrompt = document.getElementById('installPrompt');
     const installButton = document.getElementById('installButton');
 
+    // Function to update prompt content
+    function showInstalledMessage() {
+        const content = installPrompt.querySelector('.install-prompt-content');
+        content.innerHTML = `
+            <h2>Znapp Installed</h2>
+            <p>Please use the installed app version for the best experience.</p>
+        `;
+    }
+
     // Check if the app is running in standalone mode
     if (window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true) {
         installPrompt.style.display = 'none';
     } else {
-        // Show install prompt for browser users
+        // Show install prompt immediately for browser users
+        installPrompt.classList.add('show');
+
+        // Handle install prompt event
         window.addEventListener('beforeinstallprompt', (e) => {
-            // Prevent Chrome 67 and earlier from automatically showing the prompt
             e.preventDefault();
-            // Stash the event so it can be triggered later
             deferredPrompt = e;
-            // Show the install prompt
-            installPrompt.classList.add('show');
         });
 
         // Handle the install button click
-        installButton.addEventListener('click', async () => {
-            if (!deferredPrompt) return;
-            // Show the install prompt
-            deferredPrompt.prompt();
-            // Wait for the user to respond to the prompt
-            const { outcome } = await deferredPrompt.userChoice;
-            // Clear the saved prompt
-            deferredPrompt = null;
-            // Hide the install prompt
-            installPrompt.classList.remove('show');
+        installButton.addEventListener('click', () => {
+            // Change panel content immediately
+            showInstalledMessage();
+            
+            // Then handle the install prompt if available
+            if (deferredPrompt) {
+                deferredPrompt.prompt().then(async () => {
+                    try {
+                        const { outcome } = await deferredPrompt.userChoice;
+                        deferredPrompt = null;
+                        
+                        // If user cancels, revert the panel
+                        if (outcome !== 'accepted') {
+                            const content = installPrompt.querySelector('.install-prompt-content');
+                            content.innerHTML = `
+                                <h2>Install Znapp</h2>
+                                <p>Add this app to your home screen for the best experience!</p>
+                                <button class="install-button" id="installButton">Install Now</button>
+                            `;
+                            // Reattach click handler to new button
+                            document.getElementById('installButton').addEventListener('click', arguments.callee);
+                        }
+                    } catch (error) {
+                        console.log('Installation error:', error);
+                    }
+                });
+            }
         });
     }
 
