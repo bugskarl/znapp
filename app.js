@@ -726,6 +726,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const appsToShow = isSettingsEnabled ? apps : apps.filter(app => isAppInTime(app));
         console.log('Apps to show:', appsToShow.length);
 
+        // Hide grid if no apps to show and settings is disabled
+        appGrid.style.display = (!isSettingsEnabled && appsToShow.length === 0) ? 'none' : 'flex';
+
         // Add all apps to the grid in reverse order
         [...appsToShow].reverse().forEach(app => {
             console.log('Adding app:', app.name);
