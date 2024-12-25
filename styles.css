@@ -764,6 +764,14 @@ input[type="time"]::-webkit-calendar-picker-indicator {
     margin: 0.5rem 0;
 }
 
+.info-content .material-icons {
+    color: var(--primary-color);
+    cursor: pointer;
+    vertical-align: middle;
+    padding: 0;
+    font-size: 16px;
+}
+
 #infoToggle {
     cursor: pointer;
 }
