@@ -127,13 +127,14 @@
                         const newWorker = registration.installing;
                         newWorker.addEventListener('statechange', () => {
                             if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                // New content is available, notify user if needed
-                                console.log('New content is available');
+                                // New content is available
                             }
                         });
                     });
                 })
-                .catch(error => console.log('Service worker registration failed:', error));
+                .catch(() => {
+                    // Service worker registration failed
+                });
         }
     </script>
 </body>

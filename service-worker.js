@@ -20,11 +20,11 @@ self.addEventListener('install', (event) => {
     event.waitUntil(
         Promise.all([
             caches.open(CACHE_NAME).then((cache) => {
-                console.log('Caching static assets');
+                // Caching static assets
                 return cache.addAll(STATIC_ASSETS);
             }),
             caches.open(CACHE_NAME).then((cache) => {
-                console.log('Caching external assets');
+                // Caching external assets
                 return cache.addAll(EXTERNAL_ASSETS);
             })
         ]).then(() => self.skipWaiting())
@@ -70,7 +70,7 @@ self.addEventListener('activate', (event) => {
                     cacheNames
                         .filter((cacheName) => cacheName.startsWith('znapp-') && cacheName !== CACHE_NAME)
                         .map((cacheName) => {
-                            console.log('Deleting old cache:', cacheName);
+                            // Removing old cache
                             return caches.delete(cacheName);
                         })
                 );

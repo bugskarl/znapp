@@ -6,10 +6,10 @@ document.addEventListener('DOMContentLoaded', () => {
         window.addEventListener('load', () => {
             navigator.serviceWorker.register('/service-worker.js')
                 .then(registration => {
-                    console.log('ServiceWorker registration successful');
+                    // ServiceWorker registration successful
                 })
                 .catch(err => {
-                    console.log('ServiceWorker registration failed: ', err);
+                    // ServiceWorker registration failed
                 });
         });
     }
@@ -236,7 +236,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Update selected icon when editing
     function openEditModal(app, index) {
-        console.log('Opening edit modal with app:', JSON.stringify(app, null, 2));
+        // Opening edit modal with app
         
         // Fill form with app data
         document.getElementById('appName').value = app.name;
@@ -267,20 +267,18 @@ document.addEventListener('DOMContentLoaded', () => {
         // Handle time slots
         const timeContainer = document.querySelector('.time-slots-container');
         if (!timeContainer) {
-            console.error('Time slots container not found');
+            // Time slots container not found
             return;
         }
         timeContainer.innerHTML = '';
         
-        // Log the schedule data
-        console.log('Time slots:', app.timeSlots);
-        
+        // Time slots:
         const schedules = app.timeSlots || [];
-        console.log('Processed schedules:', schedules);
         
+        // Processed schedules:
         if (schedules.length > 0) {
             schedules.forEach((slot, index) => {
-                console.log('Creating slot:', slot);
+                // Creating slot:
                 const timeSlotContainer = document.createElement('div');
                 timeSlotContainer.className = 'time-slot';
 
@@ -292,14 +290,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 timeFromInput.className = 'time-from';
                 timeFromInput.required = true;
                 timeFromInput.value = slot.timeFrom;
-                console.log('Setting timeFrom:', slot.timeFrom);
+                // Setting timeFrom:
 
                 const timeToInput = document.createElement('input');
                 timeToInput.type = 'time';
                 timeToInput.className = 'time-to';
                 timeToInput.required = true;
                 timeToInput.value = slot.timeTo;
-                console.log('Setting timeTo:', slot.timeTo);
+                // Setting timeTo:
 
                 timeInputsContainer.appendChild(timeFromInput);
                 timeInputsContainer.appendChild(timeToInput);
@@ -325,7 +323,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     dayToggle.setAttribute('data-selected', isSelected);
                     dayToggle.setAttribute('data-value', day.value);
                     dayToggle.textContent = day.label;
-                    console.log('Day toggle:', day.value, isSelected);
+                    // Day toggle:
 
                     dayToggle.addEventListener('click', () => {
                         const currentSelected = dayToggle.getAttribute('data-selected') === 'true';
@@ -413,7 +411,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function getTimeSlots() {
         const timeSlots = [];
         const timeSlotContainers = document.querySelectorAll('.time-slot');
-        console.log('Getting time slots from', timeSlotContainers.length, 'containers');
+        // Getting time slots from containers
 
         timeSlotContainers.forEach((container, index) => {
             const timeFrom = container.querySelector('.time-from').value;
@@ -422,14 +420,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 .filter(toggle => toggle.getAttribute('data-selected') === 'true')
                 .map(toggle => toggle.getAttribute('data-value'));
 
-            console.log('Time slot', index, ':', { timeFrom, timeTo, days });
-
+            // Final time slots:
             if (timeFrom && timeTo && days.length > 0) {
                 timeSlots.push({ timeFrom, timeTo, days });
             }
         });
 
-        console.log('Final time slots:', timeSlots);
+        // Returning processed time slots
         return timeSlots;
     }
 
@@ -487,7 +484,7 @@ document.addEventListener('DOMContentLoaded', () => {
     addTimeSlotBtn.addEventListener('click', () => {
         const timeSlots = timeSlotContainer.querySelectorAll('.time-slot');
         if (timeSlots.length >= 5) {
-            alert('Maximum of 5 time slots allowed');
+            // Maximum of 5 time slots allowed
             return;
         }
 
@@ -706,9 +703,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function reloadAppGrid(apps) {
-        console.log('Total apps:', apps.length);
-        console.log('Apps:', apps);
-
         // Get fresh references to elements
         const appGrid = document.querySelector('.app-grid');
         const addApp = document.querySelector('.add-app');
@@ -720,18 +714,16 @@ document.addEventListener('DOMContentLoaded', () => {
         appGrid.appendChild(addApp);
 
         const isSettingsEnabled = settingsToggle.classList.contains('active');
-        console.log('Settings enabled:', isSettingsEnabled);
-        
+
         // When settings enabled, show ALL apps. When disabled, only show in-time apps
         const appsToShow = isSettingsEnabled ? apps : apps.filter(app => isAppInTime(app));
-        console.log('Apps to show:', appsToShow.length);
 
         // Hide grid if no apps to show and settings is disabled
         appGrid.style.display = (!isSettingsEnabled && appsToShow.length === 0) ? 'none' : 'flex';
 
         // Add all apps to the grid in reverse order
         [...appsToShow].reverse().forEach(app => {
-            console.log('Adding app:', app.name);
+            // Adding app
             const appElement = createAppElement(
                 app,
                 apps.indexOf(app),
@@ -776,23 +768,23 @@ document.addEventListener('DOMContentLoaded', () => {
     // Form submission handler
     addAppForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        console.log('Form submitted');
+        // Form submitted
 
         const name = document.getElementById('appName').value;
         const url = document.getElementById('appUrl').value;
 
         // Validate required fields
         if (!name || !url || !selectedIconName) {
-            alert('Please fill in all required fields and select an icon');
+            // Please fill in all required fields and select an icon
             return;
         }
 
         const timeSlots = getTimeSlots();
-        console.log('Got time slots:', timeSlots);
+        // Got time slots
 
         // Validate time slots
         if (!timeSlots || timeSlots.length === 0) {
-            alert('Please add at least one valid time slot with selected days');
+            // Please add at least one valid time slot with selected days
             return;
         }
 
@@ -804,20 +796,21 @@ document.addEventListener('DOMContentLoaded', () => {
             timeSlots: timeSlots
         };
 
-        console.log('Saving app:', newApp);
+        // Saving app
         const apps = JSON.parse(localStorage.getItem('apps') || '[]');
 
         if (addAppForm.dataset.mode === 'edit') {
             const index = parseInt(addAppForm.dataset.editIndex);
-            console.log('Editing app at index:', index);
+            // Editing app
             apps[index] = newApp;
         } else {
-            console.log('Adding new app');
+            // Adding new app
             apps.push(newApp);
         }
 
+        // Saving updated apps
         localStorage.setItem('apps', JSON.stringify(apps));
-        console.log('Saved apps:', apps);
+        // Apps saved
         reloadAppGrid(apps);
         closeModalHandler();
     });
@@ -961,7 +954,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             document.getElementById('installButton').addEventListener('click', arguments.callee);
                         }
                     } catch (error) {
-                        console.log('Installation error:', error);
+                        // Installation error
                     }
                 });
             }
