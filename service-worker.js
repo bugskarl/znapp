@@ -27,55 +27,40 @@ self.addEventListener('install', (event) => {
                 console.log('Caching external assets');
                 return cache.addAll(EXTERNAL_ASSETS);
             })
-        ])
+        ]).then(() => self.skipWaiting())
     );
-    // Force activation
-    self.skipWaiting();
 });
 
-// Network first, then cache for dynamic content
+// Stale-while-revalidate strategy
 self.addEventListener('fetch', (event) => {
-    // Skip non-GET requests
-    if (event.request.method !== 'GET') {
-        return;
-    }
+    if (event.request.method !== 'GET') return;
 
-    // Handle the fetch
     event.respondWith(
-        fetch(event.request)
-            .then((response) => {
-                // Check if we received a valid response
-                if (!response || response.status !== 200) {
-                    throw Error('Invalid response');
-                }
+        caches.open(CACHE_NAME)
+            .then(cache => {
+                return cache.match(event.request)
+                    .then(cachedResponse => {
+                        const fetchPromise = fetch(event.request)
+                            .then(networkResponse => {
+                                if (networkResponse.ok) {
+                                    // Only cache successful responses
+                                    const url = new URL(event.request.url);
+                                    if (url.origin === location.origin || EXTERNAL_ASSETS.includes(event.request.url)) {
+                                        cache.put(event.request, networkResponse.clone());
+                                    }
+                                }
+                                return networkResponse;
+                            })
+                            .catch(() => cachedResponse);
 
-                // Only cache local assets
-                const url = new URL(event.request.url);
-                if (url.origin === location.origin) {
-                    const responseClone = response.clone();
-                    caches.open(CACHE_NAME)
-                        .then((cache) => {
-                            cache.put(event.request, responseClone);
-                        });
-                }
-
-                return response;
-            })
-            .catch(() => {
-                // If network fails, try cache
-                return caches.match(event.request)
-                    .then((response) => {
-                        if (response) {
-                            return response;
-                        }
-                        // If not in cache, return a basic offline page
-                        return new Response('Offline - No cached version available');
+                        // Return cached response immediately if available
+                        return cachedResponse || fetchPromise;
                     });
             })
     );
 });
 
-// Clean up old caches on activation
+// Clean up old caches and take control
 self.addEventListener('activate', (event) => {
     event.waitUntil(
         Promise.all([
@@ -83,16 +68,14 @@ self.addEventListener('activate', (event) => {
             caches.keys().then((cacheNames) => {
                 return Promise.all(
                     cacheNames
-                        .filter((cacheName) => {
-                            return cacheName.startsWith('znapp-') && cacheName !== CACHE_NAME;
-                        })
+                        .filter((cacheName) => cacheName.startsWith('znapp-') && cacheName !== CACHE_NAME)
                         .map((cacheName) => {
                             console.log('Deleting old cache:', cacheName);
                             return caches.delete(cacheName);
                         })
                 );
             }),
-            // Take control of all clients
+            // Take control immediately
             clients.claim()
         ])
     );
