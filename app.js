@@ -586,10 +586,12 @@ document.addEventListener('DOMContentLoaded', () => {
         removeBtn.className = 'material-icons control-icon remove-icon';
         removeBtn.textContent = 'delete';
         removeBtn.addEventListener('click', () => {
-            const apps = JSON.parse(localStorage.getItem('apps') || '[]');
-            apps.splice(index, 1);
-            localStorage.setItem('apps', JSON.stringify(apps));
-            reloadAppGrid(apps);
+            if (confirm(`Do you really want to delete "${app.name}"?`)) {
+                const apps = JSON.parse(localStorage.getItem('apps') || '[]');
+                apps.splice(index, 1);
+                localStorage.setItem('apps', JSON.stringify(apps));
+                reloadAppGrid(apps);
+            }
         });
         controls.appendChild(removeBtn);
 
